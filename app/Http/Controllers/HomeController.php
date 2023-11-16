@@ -27,7 +27,7 @@ class HomeController extends Controller
      */
     public function index()
     {
-        dd(123);
+        dd(123333);
         // echo '<pre>';
         // $apiKeyId = $partnerId = "940dcd7e-85bf-430a-9712-aefd2b7da4a4";
         // $apiScretKey = $xClientSecret = "f7d83962-32dd-400e-afda-39a33396aaa1";
