@@ -69,8 +69,8 @@ class HomeController extends Controller
                         'label' => 'Licenses',
                         'data' => $data,
                         'borderWidth' => 1,
-                        'borderColor' => '#555c60',
-                        'backgroundColor' => '#d5d7d8',
+                        'borderColor' => '#1a85f2',
+                        'backgroundColor' => '#8abcee',
                     ]
                 ]
             ]
@@ -96,7 +96,6 @@ class HomeController extends Controller
                 'labels' => ['Active', 'In Active'],
                 'datasets' => [
                     [
-                        // 'label' => 'Licenses',
                         'data' => [$active, $inactive],
                         'borderWidth' => 1,
                         'borderColor' => ['#169dab', '#3c444b'],
