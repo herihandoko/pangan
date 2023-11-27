@@ -1,8 +1,6 @@
 <?php
 
 use App\Http\Controllers\FileController;
-use App\Http\Controllers\Monetize\UserBankController;
-use App\Http\Controllers\Monetize\PayoutController;
 use Illuminate\Encryption\Encrypter;
 use Illuminate\Support\Facades\Route;
 use App\Model\User;
@@ -34,12 +32,82 @@ Route::get('appredirect/{key}', function ($key) {
 Auth::routes();
 Route::group(['middleware' => ['user.check', 'auth', 'web']], function () {
     Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('/home/application-cost', 'HomeController@costapp')->name('home.costapp');
+    Route::get('/home/appliaction-status', 'HomeController@stsapp')->name('home.stsapp');
+    Route::get('/home/appliaction-opd', 'HomeController@opdapp')->name('home.opdapp');
     Route::get('/phpinfo', function () {
         phpinfo();
     });
 
     Route::group(['prefix' => 'document'], function () {
         Route::get('/user-files/{path}', [FileController::class, 'getUserFile'])->name('file.user_files.show');
+    });
+
+    Route::group(['prefix' => 'inventory'], function () {
+        Route::get('application', 'InventoryController@index')->name('inventory.application.index');
+        Route::get('application/fetch', 'InventoryController@fetch')->name('inventory.application.fetch');
+        Route::get('application/create', 'InventoryController@create')->name('inventory.application.create');
+        Route::get('application/{id}/edit', 'InventoryController@edit')->name('inventory.application.edit');
+        Route::get('application/{id}/show', 'InventoryController@show')->name('inventory.application.show');
+        Route::post('application/store', 'InventoryController@store')->name('inventory.application.store');
+        Route::put('application/update', 'InventoryController@update')->name('inventory.application.update');
+        Route::delete('application/destroy', 'InventoryController@destroy')->name('inventory.application.destroy');
+
+        Route::get('hardware', 'HardwareController@index')->name('inventory.hardware.index');
+        Route::get('hardware/fetch', 'HardwareController@fetch')->name('inventory.hardware.fetch');
+        Route::get('hardware/create', 'HardwareController@create')->name('inventory.hardware.create');
+        Route::get('hardware/{id}/edit', 'HardwareController@edit')->name('inventory.hardware.edit');
+        Route::get('hardware/{id}/show', 'HardwareController@show')->name('inventory.hardware.show');
+        Route::post('hardware/store', 'HardwareController@store')->name('inventory.hardware.store');
+        Route::put('hardware/update', 'HardwareController@update')->name('inventory.hardware.update');
+        Route::delete('hardware/destroy', 'HardwareController@destroy')->name('inventory.hardware.destroy');
+    });
+
+    Route::group(['prefix' => 'master'], function () {
+        Route::get('category', 'CategoryController@index')->name('master.category.index');
+        Route::get('category/fetch', 'CategoryController@fetch')->name('master.category.fetch');
+        Route::get('category/create', 'CategoryController@create')->name('master.category.create');
+        Route::get('category/{id}/edit', 'CategoryController@edit')->name('master.category.edit');
+        Route::get('category/{id}/show', 'CategoryController@show')->name('master.category.show');
+        Route::post('category/store', 'CategoryController@store')->name('master.category.store');
+        Route::put('category/update', 'CategoryController@update')->name('master.category.update');
+        Route::delete('category/destroy', 'CategoryController@destroy')->name('master.category.destroy');
+
+        Route::get('opd', 'OpdController@index')->name('master.opd.index');
+        Route::get('opd/fetch', 'OpdController@fetch')->name('master.opd.fetch');
+        Route::get('opd/create', 'OpdController@create')->name('master.opd.create');
+        Route::get('opd/{id}/edit', 'OpdController@edit')->name('master.opd.edit');
+        Route::get('opd/{id}/show', 'OpdController@show')->name('master.opd.show');
+        Route::post('opd/store', 'OpdController@store')->name('master.opd.store');
+        Route::put('opd/update', 'OpdController@update')->name('master.opd.update');
+        Route::delete('opd/destroy', 'OpdController@destroy')->name('master.opd.destroy');
+
+        Route::get('sub-unit', 'ProgramController@index')->name('master.sub-unit.index');
+        Route::get('sub-unit/fetch', 'ProgramController@fetch')->name('master.sub-unit.fetch');
+        Route::get('sub-unit/create', 'ProgramController@create')->name('master.sub-unit.create');
+        Route::get('sub-unit/{id}/edit', 'ProgramController@edit')->name('master.sub-unit.edit');
+        Route::get('sub-unit/{id}/show', 'ProgramController@show')->name('master.sub-unit.show');
+        Route::post('sub-unit/store', 'ProgramController@store')->name('master.sub-unit.store');
+        Route::put('sub-unit/update', 'ProgramController@update')->name('master.sub-unit.update');
+        Route::delete('sub-unit/destroy', 'ProgramController@destroy')->name('master.sub-unit.destroy');
+        
+        Route::get('database', 'DatabaseController@index')->name('master.database.index');
+        Route::get('database/fetch', 'DatabaseController@fetch')->name('master.database.fetch');
+        Route::get('database/create', 'DatabaseController@create')->name('master.database.create');
+        Route::get('database/{id}/edit', 'DatabaseController@edit')->name('master.database.edit');
+        Route::get('database/{id}/show', 'DatabaseController@show')->name('master.database.show');
+        Route::post('database/store', 'DatabaseController@store')->name('master.database.store');
+        Route::put('database/update', 'DatabaseController@update')->name('master.database.update');
+        Route::delete('database/destroy', 'DatabaseController@destroy')->name('master.database.destroy');
+
+        Route::get('servers', 'ServersController@index')->name('master.servers.index');
+        Route::get('servers/fetch', 'ServersController@fetch')->name('master.servers.fetch');
+        Route::get('servers/create', 'ServersController@create')->name('master.servers.create');
+        Route::get('servers/{id}/edit', 'ServersController@edit')->name('master.servers.edit');
+        Route::get('servers/{id}/show', 'ServersController@show')->name('master.servers.show');
+        Route::post('servers/store', 'ServersController@store')->name('master.servers.store');
+        Route::put('servers/update', 'ServersController@update')->name('master.servers.update');
+        Route::delete('servers/destroy', 'ServersController@destroy')->name('master.servers.destroy');
     });
 
     Route::group(['prefix' => 'settings'], function () {
@@ -82,7 +150,7 @@ Route::group(['middleware' => ['user.check', 'auth', 'web']], function () {
         Route::get('configs', 'ConfigsController@index')->name('settings.configs.index');
         Route::post('configs/store', 'ConfigsController@store')->name('settings.configs.store');
     });
-    
+
     Route::get('gallery', 'GalleryController@index')->name('gallery');
 
     Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth']], function () {

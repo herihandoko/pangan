@@ -62,7 +62,7 @@ class ConfigsController extends Controller
     {
         $this->authorize('edit', $this->moduleCode);
         $validator = \Validator::make($request->all(), [
-            'sitename' => ['required', 'max:18'],
+            'sitename' => ['required', 'max:64'],
             'sitename_part1' => ['required', 'max:18'],
             'sitename_part2' => ['required', 'max:18'],
             'sitename_short' => ['required', 'max:2'],
