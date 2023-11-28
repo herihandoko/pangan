@@ -32,7 +32,7 @@
                 <h4 class="panel-title">Users - list</h4>
             </div>
             <div class="panel-body">
-                <table id="data-table" class="table table-striped table-bordered">
+                <table id="data-table" class="table table-striped table-bordered responsive" width="100%">
                     <thead>
                         <tr>
                             <th>Id</th>

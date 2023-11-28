@@ -38,7 +38,7 @@
                 </div>
                 <div class="panel-body">
                     @include('master.message')
-                    <table id="data-table" class="table table-striped table-bordered">
+                    <table id="data-table" class="table table-striped table-bordered responsive" width="100%">
                         <thead>
                             <tr>
                                 <th>STATUS</th>
