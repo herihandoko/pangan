@@ -249,7 +249,7 @@
         </p>
     </div>
     <div class="col-md-4 text-right justify-content-center align-items-center">
-        <button type="button" onclick="add_document_kmk();" class="btn btn-primary btn-sm m-r-5"><i
+        <button type="button" onclick="add_document_kmk();" class="btn btn-primary btn-sm m-r-5 m-b-5"><i
                 class="fa fa-plus"></i> Tambah Dokumen/Link</button>
     </div>
 </div>
@@ -300,7 +300,7 @@
         </p>
     </div>
     <div class="col-md-4 text-right justify-content-center align-items-center">
-        <button type="button" onclick="add_document_probis();" class="btn btn-primary btn-sm m-r-5"><i
+        <button type="button" onclick="add_document_probis();" class="btn btn-primary btn-sm m-r-5 m-b-5"><i
                 class="fa fa-plus"></i> Tambah Dokumen/Link</button>
     </div>
 </div>
@@ -345,14 +345,14 @@
 </div>
 <hr>
 <div class="row">
-    <div class="col-md-8">
+    <div class="col-md-8 col-sm-12">
         <h4>Tambahkan Dokumen Manual Book</h4>
         <p>
             Anda dapat menambahkan dokumen atau link Proses Bisnis dan menyimpan data Anda
         </p>
     </div>
-    <div class="col-md-4 text-right justify-content-center align-items-center">
-        <button type="button" onclick="add_document_manual();" class="btn btn-primary btn-sm m-r-5"><i
+    <div class="col-md-4 col-sm-12 text-right justify-content-center align-items-center">
+        <button type="button" onclick="add_document_manual();" class="btn btn-primary btn-sm m-r-5 m-b-5"><i
                 class="fa fa-plus"></i> Tambah Dokumen/Link</button>
     </div>
 </div>
