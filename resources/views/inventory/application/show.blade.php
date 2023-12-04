@@ -89,6 +89,50 @@ $application = $data['application'];
                             </tr>
                         </tbody>
                     </table>
+                    <h4>Dokumen KAK (Kerangka Acuan Kerja)</h4>
+                    <table class="table table-bordered">
+                        <tbody>
+                            <?php ?>
+                            <?php $row = 1; ?>
+                            @foreach($data['documents'] as $item)
+                                @if ($item->inventory == 'application-kmk')
+                                    <tr>
+                                        <th width="200">Document  {{ $row++ }}</th>
+                                        <td><a href="{{ $item->url }}" target="_blank"><i class="fa fa-download"></i> Download</a></td>
+                                    </tr>
+                                @endif
+                            @endforeach
+                        </tbody>
+                    </table>
+                    <h4>Dokumen Proses Bisnis</h4>
+                    <table class="table table-bordered">
+                        <tbody>
+                            <?php ?>
+                            <?php $row = 1; ?>
+                            @foreach($data['documents'] as $item)
+                                @if ($item->inventory == 'application-probis')
+                                    <tr>
+                                        <th width="200">Document  {{ $row++ }}</th>
+                                        <td><a href="{{ $item->url }}" target="_blank"><i class="fa fa-download"></i> Download</a></td>
+                                    </tr>
+                                @endif
+                            @endforeach
+                        </tbody>
+                    </table>
+                    <h4>Dokumen Dokumen Manual Book</h4>
+                    <table class="table table-bordered">
+                        <tbody>
+                            <?php $row = 1; ?>
+                            @foreach($data['documents'] as $item)
+                                @if ($item->inventory == 'application-manual')
+                                    <tr>
+                                        <th width="200">Document {{ $row++ }}</th>
+                                        <td><a href="{{ $item->url }}" target="_blank"><i class="fa fa-download"></i> Download</a></td>
+                                    </tr>
+                                @endif
+                            @endforeach
+                        </tbody>
+                    </table>
                     <div class="form-group">
                         <div class="col-md-8">
                             <a href="{{ route('inventory.application.index') }}" class="btn btn-sm btn-default">Kembali</a>
