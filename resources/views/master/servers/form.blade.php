@@ -26,7 +26,7 @@
     </div>
 </div>
 <div class="form-group">
-    <label for="ip" class="col-md-3 control-label">IP Address <span class="text-danger">*</span></label>
+    <label for="ip" class="col-md-3 control-label">Server Name <span class="text-danger">*</span></label>
     <div class="col-md-9">
         {{ Form::text('ip', isset($servers->ip) ? $servers->ip : old('ip'), ['class' => $errors->has('ip') ? 'form-control is-invalid' : 'form-control', 'placeholder' => '127.0.0.1']) }}
         <span style="color:red !important;">{{ $errors->first('ip') }}</span>

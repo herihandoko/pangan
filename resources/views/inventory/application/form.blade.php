@@ -39,12 +39,12 @@
             <span style="color:red !important;">{{ $errors->first('user_base') }}</span>
         </div>
         <div class="form-group">
-            {{ Form::label('scope', 'Scope', ['class' => 'control-label']) }} <span class="text-danger">*</span>
+            {{ Form::label('scope', 'Tipe Layanan', ['class' => 'control-label']) }} <span class="text-danger">*</span>
             {{ Form::select(
                 'scope',
                 [
-                    'publik' => 'Publik',
-                    'instansi' => 'Instansi',
+                    'publik' => 'Layanan Publik',
+                    'instansi' => 'Tata Kelola Pemerintah',
                 ],
                 isset($application->scope) ? $application->scope : old('scope'),
                 ['class' => $errors->has('scope') ? 'form-control is-invalid' : 'form-control'],
@@ -74,7 +74,7 @@
     </div>
     <div class="col-md-6">
         <div class="form-group">
-            {{ Form::label('url', 'Domain/Package/URL', ['class' => 'control-label']) }} <span
+            {{ Form::label('url', 'Domain/Package/URL/DNS', ['class' => 'control-label']) }} <span
                 class="text-danger">*</span>
             {{ Form::text('url', isset($application->url) ? $application->url : old('url'), ['class' => $errors->has('url') ? 'form-control is-invalid' : 'form-control']) }}
             <span style="color:red !important;">{{ $errors->first('url') }}</span>
@@ -94,17 +94,14 @@
                 class="text-danger">*</span>
             {{ Form::select(
                 'status',
-                [
-                    'active' => 'Active',
-                    'inactive' => 'Inactive',
-                ],
+                $data['status_app'],
                 isset($application->status) ? $application->status : old('status'),
                 ['class' => $errors->has('status') ? 'form-control is-invalid' : 'form-control'],
             ) }}
             <span style="color:red !important;">{{ $errors->first('status') }}</span>
         </div>
         <div class="form-group">
-            {{ Form::label('platform', 'Platform', ['class' => 'control-label']) }} <span class="text-danger">*</span>
+            {{ Form::label('platform', 'Platform/Jenis', ['class' => 'control-label']) }} <span class="text-danger">*</span>
             {{ Form::select(
                 'platform',
                 [
@@ -112,6 +109,9 @@
                     'android' => 'Android',
                     'ios' => 'iOS',
                     'mweb' => 'M-Web',
+                    'desktop' => 'Desktop',
+                    'aplikasi' => 'Aplikasi',
+                    'website' => 'Website'
                 ],
                 isset($application->platform) ? $application->platform : old('platform'),
                 ['class' => $errors->has('platform') ? 'form-control is-invalid' : 'form-control'],
@@ -119,7 +119,7 @@
             <span style="color:red !important;">{{ $errors->first('platform') }}</span>
         </div>
         <div class="form-group">
-            {{ Form::label('description', 'Keterangan', ['class' => 'control-label']) }}
+            {{ Form::label('description', 'Keterangan (Fungsi dan Tujuan Aplikasi/Website)', ['class' => 'control-label']) }}
             {{ Form::textarea(
                 'description',
                 isset($application->keterangan) ? $application->keterangan : old('description'),
@@ -128,6 +128,56 @@
             <span style="color:red !important;">{{ $errors->first('description') }}</span>
         </div>
     </div>
+</div>
+<hr>
+<div class="row">
+    <div class="col-md-8">
+        <h4>Aplikasi/Service Terkait</h4>
+        <p>
+            Aplikasi atau service yang datanya berelasi dengan aplikasi ini.
+        </p>
+    </div>
+    <div class="col-md-4 text-right justify-content-center align-items-center">
+        <button type="button" onclick="add_service();" class="btn btn-primary btn-sm m-r-5 m-b-5"><i class="fa fa-plus"></i> Tambah Aplikasi</button>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div class="form-group">
+            <label>Nama Aplikasi</label>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <label>Nama Data</label>
+    </div>
+</div>
+<div id="document-service">
+    @if (isset($data['services']) && count($data['services']) > 0)
+        @foreach ($data['services'] as $item)
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <input type="text" name="service_name[]" class="form-control" value="{{ $item->service_name }}">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <input type="text" name="service_data[]" class="form-control tag-it" value="{{ $item->service_data }}">
+                </div>
+            </div>
+            <?php $rowService++; ?>
+        @endforeach    
+    @else    
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <input type="text" name="service_name[]" class="form-control" value="{{ old('service_name.'.$rowService) }}">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <input type="text" name="service_data[]" class="form-control tag-it" value="{{ old('service_data.0'.$rowService) }}">
+            </div>
+        </div>
+    @endif
 </div>
 <hr>
 <div class="row">
@@ -140,13 +190,12 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
-                    {{ Form::label('manufacturer', 'Manufacturer', ['class' => 'control-label']) }} <span
-                        class="text-danger">*</span>
+                    {{ Form::label('manufacturer', 'Manufacturer', ['class' => 'control-label']) }} <span class="text-danger">*</span>
                     {{ Form::text('manufacturer', isset($application->manufacturer) ? $application->manufacturer : old('manufacturer'), ['class' => $errors->has('manufacturer') ? 'form-control is-invalid' : 'form-control']) }}
                     <span style="color:red !important;">{{ $errors->first('manufacturer') }}</span>
                 </div>
                 <div class="form-group">
-                    {{ Form::label('type_hosting', 'Jenis Hosting', ['class' => 'control-label']) }} <span
+                    {{ Form::label('type_hosting', 'Lokasi Server', ['class' => 'control-label']) }} <span
                         class="text-danger">*</span>
                     {{ Form::select(
                         'type_hosting',
@@ -154,6 +203,8 @@
                             'on_prem' => 'On-prem',
                             'cloud' => 'Cloud',
                             'hybrid' => 'Hybrid',
+                            'diskominfo' => 'Di Kominfo',
+                            'diluardiskominfo' => 'Diluar Diskominfo'
                         ],
                         isset($application->type_hosting) ? $application->type_hosting : old('type_hosting'),
                         ['class' => $errors->has('type_hosting') ? 'form-control is-invalid' : 'form-control'],
@@ -172,7 +223,18 @@
                     ) }}
                     <span style="color:red !important;">{{ $errors->first('server_id') }}</span>
                 </div>
+                <div class="form-group">
+                    {{ Form::label('ip_address', 'IP Address', ['class' => 'control-label']) }} <span class="text-danger">*</span>
+                    {{ Form::text('ip_address', isset($application->ip_address) ? $application->ip_address : old('ip_address'), ['class' => $errors->has('ip_address') ? 'form-control is-invalid' : 'form-control','placeholder'=> '0:0:0:0']) }}
+                    <span style="color:red !important;">{{ $errors->first('ip_address') }}</span>
+                </div>
             </div>
+        </div>
+        <div class="form-group">
+            {{ Form::label('repository', 'Repository (Github,Bitbucket dsb)', ['class' => 'control-label']) }} <span
+                class="text-danger">*</span>
+            {{ Form::text('repository', isset($application->repository) ? $application->repository : old('repository'), ['class' => $errors->has('repository') ? 'form-control is-invalid' : 'form-control']) }}
+            <span style="color:red !important;">{{ $errors->first('repository') }}</span>
         </div>
     </div>
     <div class="col-md-6">
@@ -191,6 +253,21 @@
             ) }}
             <span style="color:red !important;">{{ $errors->first('predecessor_app') }}</span>
         </div>
+        <div class="form-group">
+            {{ Form::label('database', 'Database', ['class' => 'control-label']) }}
+            {{ Form::select(
+                'database',
+                $data['databases'],
+                isset($application->database) ? $application->database : old('database'),
+                ['class' => $errors->has('database') ? 'form-control is-invalid' : 'form-control'],
+            ) }}
+            <span style="color:red !important;">{{ $errors->first('database') }}</span>
+        </div>
+        <div class="form-group">
+            {{ Form::label('language', 'Bahasa Pemrograman', ['class' => 'control-label']) }} <span class="text-danger">*</span>
+            {{ Form::select('language[]',$data['languages'],isset($data['language']) ? $data['language'] : old('language'), ['class' => $errors->has('language') ? 'form-control is-invalid' : 'form-control','id'=>'bahasa-pemrograman','multiple'=>true]) }}
+            <span style="color:red !important;">{{ $errors->first('url') }}</span>
+        </div>
     </div>
 </div>
 <hr>
@@ -206,7 +283,7 @@
             {{ Form::select(
                 'opd_id',
                 $data['opds'],
-                isset($application->opd_id) ? $application->opd_id : old('type_hosting'),
+                isset($application->opd_id) ? $application->opd_id : old('opd_id'),
                 [
                     'class' => $errors->has('opd_id') ? 'form-control is-invalid select2' : 'form-control select2',
                 ],
@@ -218,25 +295,97 @@
             {{ Form::select(
                 'sub_unit',
                 $data['programs'],
-                isset($application->sub_unit) ? $application->sub_unit : old('type_hosting'),
+                isset($application->sub_unit) ? $application->sub_unit : old('sub_unit'),
                 [
                     'class' => $errors->has('sub_unit') ? 'form-control is-invalid select2' : 'form-control select2',
                 ],
             ) }}
             <span style="color:red !important;">{{ $errors->first('sub_unit') }}</span>
         </div>
+        <div class="form-group">
+            {{ Form::label('sumber_dana', 'Sumber Dana', ['class' => 'control-label']) }} <span class="text-danger">*</span>
+            {{ Form::select(
+                'sumber_dana',
+                [
+                    'apbd' => 'APBD',
+                    'nonapbd' => 'NON APBD'
+                ],
+                isset($application->sumber_dana) ? $application->sumber_dana : old('sumber_dana'),
+                [
+                    'class' => $errors->has('sumber_dana') ? 'form-control is-invalid select2' : 'form-control select2',
+                ],
+            ) }}
+            <span style="color:red !important;">{{ $errors->first('sumber_dana') }}</span>
+        </div>
     </div>
     <div class="col-md-6">
         <div class="form-group">
-            {{ Form::label('tahun_anggaran', 'Tahun Anggaran', ['class' => 'control-label']) }} <span
+            {{ Form::label('tahun_pembuatan', 'Tahun Pembangunan', ['class' => 'control-label']) }} <span
+                class="text-danger">*</span>
+            {{ Form::number('tahun_pembuatan', isset($application->tahun_pembuatan) ? $application->tahun_pembuatan : old('tahun_pembuatan'), ['class' => $errors->has('tahun_pembuatan') ? 'form-control is-invalid' : 'form-control']) }}
+            <span style="color:red !important;">{{ $errors->first('tahun_pembuatan') }}</span>
+        </div>
+        <div class="form-group">
+            {{ Form::label('tahun_anggaran', 'Tahun Anggaran/Tahun Pembangunan', ['class' => 'control-label']) }} <span
                 class="text-danger">*</span>
             {{ Form::number('tahun_anggaran', isset($application->tahun_anggaran) ? $application->tahun_anggaran : old('tahun_anggaran'), ['class' => $errors->has('tahun_anggaran') ? 'form-control is-invalid' : 'form-control']) }}
             <span style="color:red !important;">{{ $errors->first('tahun_anggaran') }}</span>
         </div>
         <div class="form-group">
-            {{ Form::label('harga', 'Harga/Lisensi', ['class' => 'control-label']) }}
+            {{ Form::label('harga', 'Lisensi/Biaya', ['class' => 'control-label']) }}
             {{ Form::number('harga', isset($application->harga) ? $application->harga : old('harga'), ['class' => $errors->has('harga') ? 'form-control is-invalid' : 'form-control']) }}
             <span style="color:red !important;">{{ $errors->first('harga') }}</span>
+        </div>
+    </div>
+</div>
+<hr>
+<div class="row">
+    <div class="col-md-8">
+        <h4>Surat Permohonan Dinas</h4>
+        <p>
+            Anda dapat menambahkan Dokumen Surat Permohonan Dinas.
+        </p>
+    </div>
+    <div class="col-md-4 text-right justify-content-center align-items-center">
+        <button type="button" onclick="add_document_spd();" class="btn btn-primary btn-sm m-r-5 m-b-5"><i
+                class="fa fa-plus"></i> Tambah Dokumen/Link</button>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <div id="document-spd">
+            @if (isset($data['documents']) && count($data['documents']) > 0)
+                @foreach ($data['documents'] as $item)
+                    @if ($item->inventory === 'application-spd')
+                        <div class="form-group">
+                            <div class="input-group">
+                                <span class="input-group-btn"><a data-input="doc_spd{{ $rowSpd }}"
+                                        data-preview="holder" class="btn btn-success lfm-spd"><i class="fa fa-file"></i>
+                                        Pilih...</a></span>
+                                {{ Form::text('doc_spd[' . $rowSpd . ']', $item->url, ['class' => 'form-control', 'id' => 'doc_spd' . $rowSpd]) }}
+                            </div>
+                        </div>
+                        <?php $rowSpd++; ?>
+                    @endif
+                @endforeach
+                @if ($rowSpd === 1)
+                    <div class="form-group">
+                        <div class="input-group">
+                            <span class="input-group-btn"><a data-input="doc_spd1" data-preview="holder"
+                                    class="btn btn-success lfm-spd"><i class="fa fa-file"></i> Pilih...</a></span>
+                            {{ Form::text('doc_spd[1]', null, ['class' => 'form-control', 'id' => 'doc_spd1']) }}
+                        </div>
+                    </div>
+                @endif
+            @else
+                <div class="form-group">
+                    <div class="input-group">
+                        <span class="input-group-btn"><a data-input="doc_spd1" data-preview="holder"
+                                class="btn btn-success lfm-spd"><i class="fa fa-file"></i> Pilih...</a></span>
+                        {{ Form::text('doc_spd[1]', null, ['class' => 'form-control', 'id' => 'doc_spd1']) }}
+                    </div>
+                </div>
+            @endif
         </div>
     </div>
 </div>

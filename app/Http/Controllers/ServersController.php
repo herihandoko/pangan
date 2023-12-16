@@ -58,7 +58,7 @@ class ServersController extends Controller
         //
         $this->authorize('create', $this->moduleCode);
         $validator = Validator::make($request->all(), [
-            'ip' => 'required|ip',
+            'ip' => 'required|max:255',
         ]);
 
         if ($validator->fails()) {
@@ -120,7 +120,7 @@ class ServersController extends Controller
         //
         $this->authorize('update', $this->moduleCode);
         $validator = Validator::make($request->all(), [
-            'ip' => 'required|max:150|unique:servers,ip,' . $request->id,
+            'ip' => 'required|max:255|unique:servers,ip,' . $request->id,
         ]);
 
         if ($validator->fails()) {

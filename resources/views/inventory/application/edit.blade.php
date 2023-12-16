@@ -1,5 +1,7 @@
 <?php
 $application = $data['application'];
+$rowService = 1;
+$rowSpd = 1;
 $rowKmk = 1;
 $rowProbis = 1;
 $rowManual = 1;
@@ -39,18 +41,57 @@ $rowManual = 1;
 @endsection
 @section('css')
     <link href="{{ asset('assets/plugins/select2/dist/css/select2.min.css') }}" rel="stylesheet" />
+    <link href="{{ asset('assets/plugins/jquery-tag-it/css/jquery.tagit.css') }}" rel="stylesheet">
 @endsection
 @section('js')
     <script type="text/javascript" src="https://unpkg.com/default-passive-events"></script>
     <script src="{{ asset('/vendor/laravel-filemanager/js/stand-alone-button.js') }}"></script>
     <script src="{{ asset('assets/plugins/select2/dist/js/select2.min.js') }}"></script>
+    <script src="{{ asset('assets/plugins/jquery-tag-it/js/tag-it.min.js') }}"></script>
     <script>
         $(document).ready(function() {
             $('.select2').select2();
+            $('#bahasa-pemrograman').select2();
+            $('a.lfm-spd').filemanager('file');
             $('a.lfm-kak').filemanager('file');
             $('a.lfm-probis').filemanager('file');
             $('a.lfm-manual').filemanager('file');
+            $('.tag-it').tagit();
         });
+
+        function add_service(){
+            var room = ($('#document-service').children()).length;
+            room++;
+            var objTo = document.getElementById('document-service')
+            var divtest = document.createElement("div");
+            divtest.setAttribute("class", "row");
+            var rdiv = 'removeclass' + room;
+            divtest.innerHTML = '<div class="col-md-6">'+
+                    '<div class="form-group">'+
+                        '<input type="text" class="form-control" name="service_name[]">'+
+                    '</div>'+
+                '</div>'+
+                '<div class="col-md-6">'+
+                    '<input type="text" class="form-control tag-it" name="service_data[]">'+
+                '</div>';
+            objTo.append(divtest);
+            $('.tag-it').tagit();
+        }
+
+        function add_document_spd() {
+            var room = ($('#document-spd').children()).length;
+            room++;
+            var objTo = document.getElementById('document-spd')
+            var divtest = document.createElement("div");
+            divtest.setAttribute("class", "form-group");
+            var rdiv = 'removeclass' + room;
+            divtest.innerHTML = '<div class="input-group"><span class="input-group-btn"><a value=' + room +
+                ' data-input="doc_spd' + room +
+                '" data-preview="holder" class="btn btn-success lfm-spd"><i class="fa fa-file"></i> Pilih...</a></span><input class="form-control" id="doc_spd' +
+                room + '" name="doc_spd[' + room + ']" type="text"></div>';
+            objTo.append(divtest)
+            $('a.lfm-spd').filemanager('file');
+        }
 
         function add_document_kmk() {
             var room = ($('#document-kmk').children()).length;

@@ -7,6 +7,11 @@ use App\Http\Requests\StoreInventoryRequest;
 use App\Http\Requests\UpdateInventoryRequest;
 use App\Inventory;
 use App\Model\Category;
+use App\Model\Dbinventory;
+use App\Model\InventoryHasLanguage;
+use App\Model\InventoryHasService;
+use App\Model\Language;
+use App\Model\StatusAplikasi;
 use App\Opd;
 use App\Program;
 use App\Servers;
@@ -56,6 +61,9 @@ class InventoryController extends Controller
         $data['categories'] = Category::pluck('name', 'id')->prepend('Select Kategori', '');
         $data['inventory'] = Inventory::pluck('name', 'id')->prepend('Select Aplikasi', '');
         $data['servers'] = Servers::pluck('ip', 'id')->prepend('Select Server', '');
+        $data['databases'] = Dbinventory::pluck('name', 'id')->prepend('Select Database', '');
+        $data['languages'] = Language::pluck('name', 'id');
+        $data['status_app'] = StatusAplikasi::pluck('name', 'name');
         return view('inventory.application.create', compact('data'));
     }
 
@@ -90,7 +98,27 @@ class InventoryController extends Controller
         $inventory->endpoint_api = $request->endpoint_api;
         $inventory->sub_unit = $request->sub_unit;
         $inventory->harga = $request->harga;
+        $inventory->repository = $request->repository;
+        $inventory->database = $request->database;
+        $inventory->sumber_dana = $request->sumber_dana;
+        $inventory->tahun_pembuatan = $request->tahun_pembuatan;
+        $inventory->ip_address = $request->ip_address;
         if ($inventory->save()) {
+            $docSpd = $request->doc_spd;
+            if ($docSpd) {
+                $data = [];
+                foreach ($docSpd as $key => $value) {
+                    if ($value)
+                        $data[] = [
+                            'inventory_id' => $inventory->id,
+                            'inventory' => 'application-spd',
+                            'url' => $value,
+                            'created_at' => date('Y-m-d H:i:s')
+                        ];
+                }
+                if ($data)
+                    Document::insert($data);
+            }
             $docKmk = $request->doc_kmk;
             if ($docKmk) {
                 $data = [];
@@ -136,6 +164,39 @@ class InventoryController extends Controller
                 if ($data)
                     Document::insert($data);
             }
+
+            $docLanguage = $request->language;
+            if ($docLanguage) {
+                $data = [];
+                foreach ($docLanguage as $key => $value) {
+                    if ($value)
+                        $data[] = [
+                            'inventory_id' => $inventory->id,
+                            'language_id' => $value,
+                            'updated_at' => date('Y-m-d H:i:s')
+                        ];
+                }
+                if ($data)
+                    InventoryHasLanguage::insert($data);
+            }
+
+            $docService = $request->service_name;
+            $docServiceData = $request->service_data;
+            if ($docService) {
+                $data = [];
+                foreach ($docService as $key => $value) {
+                    if ($value)
+                        $data[] = [
+                            'inventory_id' => $inventory->id,
+                            'service_name' => $value,
+                            'service_data' => $docServiceData[$key],
+                            'updated_at' => date('Y-m-d H:i:s')
+                        ];
+                }
+                if ($data)
+                    InventoryHasService::insert($data);
+            }
+
             return redirect()->route('inventory.application.index')->with('success', 'Tambah Inventory Aplikasi Berhasil.');
         } else {
             return redirect()->route('inventory.application.index')->with('error', 'Tambah Inventory Aplikasi Gagal.');
@@ -179,6 +240,11 @@ class InventoryController extends Controller
         $data['inventory'] = Inventory::pluck('name', 'id')->prepend('Select Aplikasi', '');
         $data['documents'] = Document::select('id', 'inventory', 'url')->where('inventory_id', $id)->get();
         $data['servers'] = Servers::pluck('ip', 'id')->prepend('Select Server', '');
+        $data['databases'] = Dbinventory::pluck('name', 'id')->prepend('Select Database', '');
+        $data['languages'] = Language::pluck('name', 'id');
+        $data['language'] = InventoryHasLanguage::select('language_id')->where('inventory_id', $id)->pluck('language_id');
+        $data['status_app'] = StatusAplikasi::pluck('name', 'name');
+        $data['services'] = InventoryHasService::where('inventory_id', $id)->get();
         return view('inventory.application.edit', compact('data'));
     }
 
@@ -215,9 +281,31 @@ class InventoryController extends Controller
         $inventory->service_api = $request->service_api;
         $inventory->endpoint_api = $request->endpoint_api;
         $inventory->sub_unit = $request->sub_unit;
+        $inventory->database = $request->database;
         $inventory->harga = $request->harga;
+        $inventory->repository = $request->repository;
+        $inventory->sumber_dana = $request->sumber_dana;
+        $inventory->tahun_pembuatan = $request->tahun_pembuatan;
+        $inventory->ip_address = $request->ip_address;
         if ($inventory->save()) {
             Document::where('inventory_id', $inventory->id)->delete();
+            InventoryHasLanguage::where('inventory_id', $inventory->id)->delete();
+            InventoryHasService::where('inventory_id', $inventory->id)->delete();
+            $docSpd = $request->doc_spd;
+            if ($docSpd) {
+                $data = [];
+                foreach ($docSpd as $key => $value) {
+                    if ($value)
+                        $data[] = [
+                            'inventory_id' => $inventory->id,
+                            'inventory' => 'application-spd',
+                            'url' => $value,
+                            'created_at' => date('Y-m-d H:i:s')
+                        ];
+                }
+                if ($data)
+                    Document::insert($data);
+            }
             $docKmk = $request->doc_kmk;
             if ($docKmk) {
                 $data = [];
@@ -263,6 +351,39 @@ class InventoryController extends Controller
                 if ($data)
                     Document::insert($data);
             }
+
+            $docLanguage = $request->language;
+            if ($docLanguage) {
+                $data = [];
+                foreach ($docLanguage as $key => $value) {
+                    if ($value)
+                        $data[] = [
+                            'inventory_id' => $inventory->id,
+                            'language_id' => $value,
+                            'updated_at' => date('Y-m-d H:i:s')
+                        ];
+                }
+                if ($data)
+                    InventoryHasLanguage::insert($data);
+            }
+
+            $docService = $request->service_name;
+            $docServiceData = $request->service_data;
+            if ($docService) {
+                $data = [];
+                foreach ($docService as $key => $value) {
+                    if ($value)
+                        $data[] = [
+                            'inventory_id' => $inventory->id,
+                            'service_name' => $value,
+                            'service_data' => $docServiceData[$key],
+                            'updated_at' => date('Y-m-d H:i:s')
+                        ];
+                }
+                if ($data)
+                    InventoryHasService::insert($data);
+            }
+
             return redirect()->route('inventory.application.index')->with('success', 'Ubah Inventory Aplikasi Berhasil.');
         } else {
             return redirect()->route('inventory.application.index')->with('error', 'Ubah Inventory Aplikasi Gagal.');
@@ -289,7 +410,7 @@ class InventoryController extends Controller
     {
         $user = auth()->user();
         $status = $request->status;
-        $data = Inventory::select('id', 'code', 'name', 'version', 'scope', 'category_id', 'platform', 'tahun_anggaran', 'status', 'type_hosting', 'manufacturer', 'opd_id')
+        $data = Inventory::select('id', 'code', 'name', 'version', 'scope', 'category_id', 'platform', 'tahun_anggaran', 'status', 'type_hosting', 'manufacturer', 'opd_id', 'url', 'ip_address')
             ->with('category', 'opd');
         if ($status)
             $data->where('status', $status);
@@ -303,10 +424,10 @@ class InventoryController extends Controller
                 }
             })
             ->addColumn('category', function ($row) {
-                return $row->category->name;
+                return $row->category->name ?? '-';
             })
             ->addColumn('opd', function ($row) {
-                return $row->opd->name;
+                return $row->opd->name ?? '-';
             })
             ->addColumn('action', function ($row) use ($user) {
                 $btn = '<a href="' . route('inventory.application.show', $row->id) . '" data-toggle="tooltip" data-original-title="View" class="btn btn-xs btn-icon btn-circle btn-success btn-action-view"><i class="fa fa-eye"></i></a> ';

@@ -44,14 +44,9 @@
                                 <th width="32">Status</th>
                                 <th>ID</th>
                                 <th>Nama Aplikasi</th>
-                                <th>Versi</th>
-                                <th>Pembuat</th>
+                                <th>DNS</th>
                                 <th>OPD</th>
-                                <th>Scope</th>
-                                <th>Kategori</th>
-                                <th>Platform</th>
-                                <th>Tahun Anggaran</th>
-                                <th>Type Hosting</th>
+                                <th>IP</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -102,36 +97,16 @@
                         name: 'name'
                     },
                     {
-                        data: 'version',
-                        name: 'version'
+                        data: 'url',
+                        name: 'url'
                     },
                     {
-                        data: 'manufacturer',
-                        name: 'manufacturer'
+                        data: 'ip_address',
+                        name: 'ip_address'
                     },
                     {
                         data: 'opd',
                         name: 'opd'
-                    },
-                    {
-                        data: 'scope',
-                        name: 'scope'
-                    },
-                    {
-                        data: 'category',
-                        name: 'category'
-                    },
-                    {
-                        data: 'platform',
-                        name: 'platform'
-                    },
-                    {
-                        data: 'tahun_anggaran',
-                        name: 'tahun_anggaran'
-                    },
-                    {
-                        data: 'type_hosting',
-                        name: 'type_hosting'
                     },
                     {
                         data: 'action',

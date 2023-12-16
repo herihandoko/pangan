@@ -34,6 +34,7 @@ class StoreInventoryRequest extends FormRequest
             'tahun_anggaran' => 'required|date_format:Y',
             'opd_id' => 'required',
             'sub_unit' => 'required',
+            'ip_address' => 'ip'
         ];
     }
 }

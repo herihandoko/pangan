@@ -77,16 +77,31 @@ $application = $data['application'];
                         <tbody>
                             <tr>
                                 <th width="200">OPD</th>
-                                <td>{{ $application->opd->name }}</td>
+                                <td>{{ $application->opd->name??'-' }}</td>
                             </tr>
                             <tr>
                                 <th>Sub Unit</th>
-                                <td>{{ $application->program->name }}</td>
+                                <td>{{ $application->program->name??'-' }}</td>
                             </tr>
                             <tr>
                                 <th>Tahun Anggaran</th>
                                 <td>{{ $application->tahun_anggaran }}</td>
                             </tr>
+                        </tbody>
+                    </table>
+                    <h4>Dokumen Surat Permohonan Dinas</h4>
+                    <table class="table table-bordered">
+                        <tbody>
+                            <?php ?>
+                            <?php $row = 1; ?>
+                            @foreach($data['documents'] as $item)
+                                @if ($item->inventory == 'application-spd')
+                                    <tr>
+                                        <th width="200">Document  {{ $row++ }}</th>
+                                        <td><a href="{{ $item->url }}" target="_blank"><i class="fa fa-download"></i> Download</a></td>
+                                    </tr>
+                                @endif
+                            @endforeach
                         </tbody>
                     </table>
                     <h4>Dokumen KAK (Kerangka Acuan Kerja)</h4>
