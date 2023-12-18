@@ -410,7 +410,7 @@ class InventoryController extends Controller
     {
         $user = auth()->user();
         $status = $request->status;
-        $data = Inventory::select('id', 'code', 'name', 'version', 'scope', 'category_id', 'platform', 'tahun_anggaran', 'status', 'type_hosting', 'manufacturer', 'opd_id', 'url', 'ip_address')
+        $data = Inventory::select('id', 'code', 'name', 'version', 'scope', 'category_id', 'platform', 'tahun_anggaran', 'status', 'type_hosting', 'manufacturer', 'opd_id', 'url', 'ip_address','tahun_pembuatan')
             ->with('category', 'opd');
         if ($status)
             $data->where('status', $status);
@@ -425,6 +425,9 @@ class InventoryController extends Controller
             })
             ->addColumn('category', function ($row) {
                 return $row->category->name ?? '-';
+            })
+            ->addColumn('url', function ($row) {
+                return '<a href="https://'.$row->url.'" target="_blank">'.$row->url.'</a>' ?? '-';
             })
             ->addColumn('opd', function ($row) {
                 return $row->opd->name ?? '-';
@@ -447,7 +450,7 @@ class InventoryController extends Controller
                     });
                 }
             })
-            ->rawColumns(['action', 'status', 'category', 'opd'])
+            ->rawColumns(['action', 'status', 'category', 'opd','url'])
             ->make(true);
     }
 }

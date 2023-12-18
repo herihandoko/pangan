@@ -44,6 +44,7 @@
                                 <th width="32">Status</th>
                                 <th>ID</th>
                                 <th>Nama Aplikasi</th>
+                                <th>Tahun</th>
                                 <th>DNS</th>
                                 <th>OPD</th>
                                 <th>IP</th>
@@ -97,16 +98,20 @@
                         name: 'name'
                     },
                     {
+                        data: 'tahun_pembuatan',
+                        mane: 'tahun_pembuatan'
+                    },
+                    {
                         data: 'url',
                         name: 'url'
                     },
                     {
-                        data: 'ip_address',
-                        name: 'ip_address'
-                    },
-                    {
                         data: 'opd',
                         name: 'opd'
+                    },
+                    {
+                        data: 'ip_address',
+                        name: 'ip_address'
                     },
                     {
                         data: 'action',
