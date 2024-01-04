@@ -39,6 +39,7 @@ class InventoryController extends Controller
         $this->authorize('viewAny', $this->moduleCode);
         $data['moduleCode'] = $this->moduleCode;
         $data['status'] = $request->status;
+        $data['opd_id'] = $request->opd_id;
         return view('inventory.application.index', compact('data'));
     }
 
@@ -410,10 +411,13 @@ class InventoryController extends Controller
     {
         $user = auth()->user();
         $status = $request->status;
-        $data = Inventory::select('id', 'code', 'name', 'version', 'scope', 'category_id', 'platform', 'tahun_anggaran', 'status', 'type_hosting', 'manufacturer', 'opd_id', 'url', 'ip_address','tahun_pembuatan')
+        $opdId = $request->opd_id;
+        $data = Inventory::select('id', 'code', 'name', 'version', 'scope', 'category_id', 'platform', 'tahun_anggaran', 'status', 'type_hosting', 'manufacturer', 'opd_id', 'url', 'ip_address', 'tahun_pembuatan')
             ->with('category', 'opd');
         if ($status)
             $data->where('status', $status);
+        if ($opdId)
+            $data->where('opd_id', $opdId);
         return DataTables::of($data)
             ->addIndexColumn()
             ->addColumn('status', function ($row) {
@@ -427,7 +431,7 @@ class InventoryController extends Controller
                 return $row->category->name ?? '-';
             })
             ->addColumn('url', function ($row) {
-                return '<a href="https://'.$row->url.'" target="_blank">'.$row->url.'</a>' ?? '-';
+                return '<a href="https://' . $row->url . '" target="_blank">' . $row->url . '</a>' ?? '-';
             })
             ->addColumn('opd', function ($row) {
                 return $row->opd->name ?? '-';
@@ -450,7 +454,7 @@ class InventoryController extends Controller
                     });
                 }
             })
-            ->rawColumns(['action', 'status', 'category', 'opd','url'])
+            ->rawColumns(['action', 'status', 'category', 'opd', 'url'])
             ->make(true);
     }
 }

@@ -48,6 +48,7 @@
                                 <th>DNS</th>
                                 <th>OPD</th>
                                 <th>IP</th>
+                                <th>Type Layanan</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -80,6 +81,7 @@
                     data: function(data) {
                         const _filter = {};
                         data.status = '{{ $data['status'] }}';
+                        data.opd_id = '{{ $data['opd_id'] }}';
                     },
                     type: "GET"
                 },
@@ -112,6 +114,10 @@
                     {
                         data: 'ip_address',
                         name: 'ip_address'
+                    },
+                    {
+                        data: 'scope',
+                        name: 'scope'
                     },
                     {
                         data: 'action',

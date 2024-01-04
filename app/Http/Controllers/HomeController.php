@@ -109,8 +109,14 @@ class HomeController extends Controller
     public function opdapp(): JsonResponse
     {
         $data = Opd::select('id', 'code', 'name')->withCount('inventory');
+        // <a href="{{ route('inventory.application.index', ['status' => 'inactive']) }}">View Detail <i class="fa fa-arrow-circle-o-right"></i></a>
         return DataTables::of($data)
+            ->addColumn('inventory_count', function ($row) {
+                $url = route('inventory.application.index', ['opd_id' => $row->id]);
+                return '<a href="' . $url . '" > ' .$row->inventory_count .'</a>';
+            })
             ->addIndexColumn()
+            ->rawColumns(['inventory_count'])
             ->make(true);
     }
 }
