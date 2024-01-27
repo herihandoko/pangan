@@ -41,7 +41,7 @@
                     <table id="data-table" class="table table-striped table-bordered responsive" width="100%">
                         <thead>
                             <tr>
-                                <th width="32">Status</th>
+                                <th width="32">#</th>
                                 <th>ID</th>
                                 <th>Nama Aplikasi</th>
                                 <th>Tahun</th>
@@ -49,6 +49,7 @@
                                 <th>OPD</th>
                                 <th>IP</th>
                                 <th>Type Layanan</th>
+                                <th>Status</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -118,6 +119,10 @@
                     {
                         data: 'scope',
                         name: 'scope'
+                    },
+                    {
+                        data: 'status_text',
+                        name: 'status_text'
                     },
                     {
                         data: 'action',

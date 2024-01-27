@@ -64,7 +64,7 @@ class InventoryController extends Controller
         $data['servers'] = Servers::pluck('ip', 'id')->prepend('Select Server', '');
         $data['databases'] = Dbinventory::pluck('name', 'id')->prepend('Select Database', '');
         $data['languages'] = Language::pluck('name', 'id');
-        $data['status_app'] = StatusAplikasi::pluck('name', 'name');
+        $data['status_app'] = StatusAplikasi::pluck('name', 'code');
         return view('inventory.application.create', compact('data'));
     }
 
@@ -244,7 +244,7 @@ class InventoryController extends Controller
         $data['databases'] = Dbinventory::pluck('name', 'id')->prepend('Select Database', '');
         $data['languages'] = Language::pluck('name', 'id');
         $data['language'] = InventoryHasLanguage::select('language_id')->where('inventory_id', $id)->pluck('language_id');
-        $data['status_app'] = StatusAplikasi::pluck('name', 'name');
+        $data['status_app'] = StatusAplikasi::pluck('name', 'code');
         $data['services'] = InventoryHasService::where('inventory_id', $id)->get();
         return view('inventory.application.edit', compact('data'));
     }
@@ -409,52 +409,98 @@ class InventoryController extends Controller
 
     public function fetch(Request $request): JsonResponse
     {
+        $draw = $request->get('draw');
+        $start = $request->get("start");
+        $rowperpage = $request->get("length");
+
+        $columnIndex_arr = $request->get('order');
+        $columnName_arr = $request->get('columns');
+        $order_arr = $request->get('order');
+        $search_arr = $request->get('search');
+
+        $columnIndex = $columnIndex_arr[0]['column'];
+        $columnName = $columnName_arr[$columnIndex]['data'];
+        $columnSortOrder = $order_arr[0]['dir'];
+        if ($columnName == 'opd') {
+            $columnName = 'opd_id';
+        }
+
+        if ($columnName == 'status_text') {
+            $columnName = 'status';
+        }
+        $searchValue = $search_arr['value'];
+        $totalRecords = Inventory::count();
+
+        $query = Inventory::select('id', 'code', 'name', 'version', 'scope', 'category_id', 'platform', 'tahun_anggaran', 'status', 'type_hosting', 'manufacturer', 'opd_id', 'url', 'ip_address', 'tahun_pembuatan')
+            ->with('category', 'opd', 'statusapp')
+            ->where(function ($q) use ($searchValue) {
+                return $q->where('name', 'like', '%' . $searchValue . '%')
+                    ->orWhere('url', 'like', '%' . $searchValue . '%')
+                    ->orWhere('ip_address', 'like', '%' . $searchValue . '%');
+            });
+
+        if ($searchValue) {
+            $query->orWhereHas('opd', function ($q) use ($searchValue) {
+                $q->where('name', 'like', '%' . $searchValue . '%');
+            });
+
+            $query->orWhereHas('statusapp', function ($q) use ($searchValue) {
+                $q->where('name', 'like', '%' . $searchValue . '%');
+            });
+        }
+
+        $totalRecordswithFilter = $query->count();
+        $records = $query->skip($start)
+            ->take($rowperpage)
+            ->orderBy($columnName, $columnSortOrder)
+            ->get();
+
+        $data_arr = array();
         $user = auth()->user();
-        $status = $request->status;
-        $opdId = $request->opd_id;
-        $data = Inventory::select('id', 'code', 'name', 'version', 'scope', 'category_id', 'platform', 'tahun_anggaran', 'status', 'type_hosting', 'manufacturer', 'opd_id', 'url', 'ip_address', 'tahun_pembuatan')
-            ->with('category', 'opd');
-        if ($status)
-            $data->where('status', $status);
-        if ($opdId)
-            $data->where('opd_id', $opdId);
-        return DataTables::of($data)
-            ->addIndexColumn()
-            ->addColumn('status', function ($row) {
-                if ($row->status == 'active') {
-                    return '<i class="fa fa-fw fa-circle text-success"></i>';
-                } else {
-                    return '<i class="fa fa-fw fa-circle text-danger"></i>';
-                }
-            })
-            ->addColumn('category', function ($row) {
-                return $row->category->name ?? '-';
-            })
-            ->addColumn('url', function ($row) {
-                return '<a href="https://' . $row->url . '" target="_blank">' . $row->url . '</a>' ?? '-';
-            })
-            ->addColumn('opd', function ($row) {
-                return $row->opd->name ?? '-';
-            })
-            ->addColumn('action', function ($row) use ($user) {
-                $btn = '<a href="' . route('inventory.application.show', $row->id) . '" data-toggle="tooltip" data-original-title="View" class="btn btn-xs btn-icon btn-circle btn-success btn-action-view"><i class="fa fa-eye"></i></a> ';
-                if ($user->can('edit', $this->moduleCode) == 1) {
-                    $btn .= '<a href="' . route('inventory.application.edit', $row->id) . '" data-toggle="tooltip" data-original-title="Edit" class="btn btn-xs btn-icon btn-circle btn-warning btn-action-edit"><i class="fa fa-pencil"></i></a> ';
-                }
-                if ($user->can('delete', $this->moduleCode) == 1) {
-                    $btn .= '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="' . $row->id . '" data-original-title="Delete" class="btn btn-xs btn-icon btn-circle btn-danger btn-action-delete"><i class="fa fa-trash"></i></a>';
-                }
-                return $btn;
-            })
-            ->filter(function ($instance) use ($request) {
-                if (!empty($request->get('search'))) {
-                    $instance->where(function ($w) use ($request) {
-                        $search = $request->get('search');
-                        $w->orWhere('name', 'LIKE', "%" . Str::lower($search['value']) . "%");
-                    });
-                }
-            })
-            ->rawColumns(['action', 'status', 'category', 'opd', 'url'])
-            ->make(true);
+        foreach ($records as $record) {
+            if ($record->status == 'active') {
+                $status =  '<i class="fa fa-fw fa-circle text-success"></i>';
+            } else {
+                $status =   '<i class="fa fa-fw fa-circle text-danger"></i>';
+            }
+
+            $btn = '<a href="' . route('inventory.application.show', $record->id) . '" data-toggle="tooltip" data-original-title="View" class="btn btn-xs btn-icon btn-circle btn-success btn-action-view"><i class="fa fa-eye"></i></a> ';
+            if ($user->can('edit', $this->moduleCode) == 1) {
+                $btn .= '<a href="' . route('inventory.application.edit', $record->id) . '" data-toggle="tooltip" data-original-title="Edit" class="btn btn-xs btn-icon btn-circle btn-warning btn-action-edit"><i class="fa fa-pencil"></i></a> ';
+            }
+            if ($user->can('delete', $this->moduleCode) == 1) {
+                $btn .= '<a href="javascript:void(0)" data-toggle="tooltip"  data-id="' . $record->id . '" data-original-title="Delete" class="btn btn-xs btn-icon btn-circle btn-danger btn-action-delete"><i class="fa fa-trash"></i></a>';
+            }
+
+            $data_arr[] = array(
+                'id' => $record->id,
+                'code' => $record->code,
+                'name' => $record->name,
+                'version' => $record->version,
+                'scope' => $record->scope,
+                'category_id' => $record->category_id,
+                'platform' => $record->platform,
+                'tahun_anggaran' => $record->tahun_anggaran,
+                'status' => $status,
+                'type_hosting' => $record->type_hosting,
+                'manufacturer' => $record->manufacturer,
+                'opd_id' => $record->opd_id,
+                'url' => '<a href="https://' . $record->url . '" target="_blank">' . $record->url . '</a>' ?? '-',
+                'ip_address' => $record->ip_address,
+                'tahun_pembuatan' => $record->tahun_pembuatan,
+                'category' => $record->category->name ?? '-',
+                'opd' => $record->opd->name ?? '-',
+                'status_text' => $record->statusapp->name ?? '-',
+                'action' => $btn
+            );
+        }
+
+        $response = array(
+            "draw" => intval($draw),
+            "iTotalRecords" => $totalRecords,
+            "iTotalDisplayRecords" => $totalRecordswithFilter,
+            "aaData" => $data_arr
+        );
+        return response()->json($response);
     }
 }
