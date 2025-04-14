@@ -16,6 +16,15 @@
             <span style="color:red !important;">{{ $errors->first('name') }}</span>
         </div>
         <div class="form-group">
+            {{ Form::label('description', 'Deskripsi/Uraian', ['class' => 'control-label']) }}
+            {{ Form::textarea(
+                'description',
+                isset($application->keterangan) ? $application->keterangan : old('description'),
+                ['class' => $errors->has('status') ? 'form-control is-invalid' : 'form-control', 'rows' => 4],
+            ) }}
+            <span style="color:red !important;">{{ $errors->first('description') }}</span>
+        </div>
+        <div class="form-group">
             {{ Form::label('version', 'Versi', ['class' => 'control-label']) }} <span class="text-danger">*</span>
             {{ Form::text('version', isset($application->version) ? $application->version : old('version'), ['class' => $errors->has('version') ? 'form-control is-invalid' : 'form-control']) }}
             <span style="color:red !important;">{{ $errors->first('version') }}</span>
@@ -119,13 +128,13 @@
             <span style="color:red !important;">{{ $errors->first('platform') }}</span>
         </div>
         <div class="form-group">
-            {{ Form::label('description', 'Keterangan (Fungsi dan Tujuan Aplikasi/Website)', ['class' => 'control-label']) }}
+            {{ Form::label('fungsi', 'Fungsi Aplikasi', ['class' => 'control-label']) }}
             {{ Form::textarea(
-                'description',
-                isset($application->keterangan) ? $application->keterangan : old('description'),
-                ['class' => $errors->has('status') ? 'form-control is-invalid' : 'form-control', 'rows' => 4],
+                'fungsi',
+                isset($application->fungsi) ? $application->fungsi : old('fungsi'),
+                ['class' => $errors->has('fungsi') ? 'form-control is-invalid' : 'form-control', 'rows' => 4],
             ) }}
-            <span style="color:red !important;">{{ $errors->first('description') }}</span>
+            <span style="color:red !important;">{{ $errors->first('fungsi') }}</span>
         </div>
     </div>
 </div>

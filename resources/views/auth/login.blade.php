@@ -56,7 +56,7 @@
                 @enderror
                 <form method="POST" action="{{ route('login') }}" class="margin-bottom-0">
                     @csrf
-                    @captcha
+                    {{-- @captcha --}}
                     <div class="form-group m-b-15">
                         <input id="email" type="email" class="form-control input-lg @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" autocomplete="on" autofocus placeholder="Email Address">
                         @error('email')
