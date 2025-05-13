@@ -20,16 +20,8 @@
         <!-- begin news-feed -->
         <div class="news-feed">
             <div class="news-image">
-                <img src="{{ asset('assets/img/login-bg/apm.png') }}" data-id="login-cover-image" alt="Background Login" />
+                <img src="{{ asset('assets/img/login-bg/bg-1.jpg') }}" data-id="login-cover-image" alt="Background Login" />
             </div>
-            <!-- <div class="news-caption">
-                <h4 class="caption-title">
-                    <img class="img-icon-login" src="{{ asset('assets/img/rcti-plus-logo.png') }}" data-id="rcti-plus-logo" alt="Bantenprov Logo" />
-                </h4>
-                <p>
-                    © Bantenprov All Right Reserved 2022
-                </p>
-            </div> -->
         </div>
         <!-- end news-feed -->
         <!-- begin right-content -->

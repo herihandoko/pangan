@@ -1,5 +1,6 @@
 <?php
 
+namespace App\Helpers;
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -10,6 +11,7 @@
 
 use App\Model\Menus;
 use Illuminate\Support\Facades\URL;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * Description of MenuHelper

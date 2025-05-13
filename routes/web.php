@@ -90,7 +90,7 @@ Route::group(['middleware' => ['user.check', 'auth', 'web']], function () {
         Route::post('sub-unit/store', 'ProgramController@store')->name('master.sub-unit.store');
         Route::put('sub-unit/update', 'ProgramController@update')->name('master.sub-unit.update');
         Route::delete('sub-unit/destroy', 'ProgramController@destroy')->name('master.sub-unit.destroy');
-        
+
         Route::get('database', 'DatabaseController@index')->name('master.database.index');
         Route::get('database/fetch', 'DatabaseController@fetch')->name('master.database.fetch');
         Route::get('database/create', 'DatabaseController@create')->name('master.database.create');
@@ -108,6 +108,11 @@ Route::group(['middleware' => ['user.check', 'auth', 'web']], function () {
         Route::post('servers/store', 'ServersController@store')->name('master.servers.store');
         Route::put('servers/update', 'ServersController@update')->name('master.servers.update');
         Route::delete('servers/destroy', 'ServersController@destroy')->name('master.servers.destroy');
+
+        Route::resource('komoditas', KomoditasController::class)->parameters([
+            'komoditas' => 'komoditas',
+        ]);;
+        Route::resource('administrasi', AdministrasiController::class);
     });
 
     Route::group(['prefix' => 'settings'], function () {
@@ -152,6 +157,9 @@ Route::group(['middleware' => ['user.check', 'auth', 'web']], function () {
     });
 
     Route::get('gallery', 'GalleryController@index')->name('gallery');
+    Route::resource('harga-komoditas-harian', HargaKomoditasHarianKabkotaController::class);
+    Route::get('data-komoditas/upload', 'HargaKomoditasHarianKabkotaController@upload')->name('data-komoditas.upload');
+    Route::post('data-komoditas/import', 'HargaKomoditasHarianKabkotaController@import')->name('data-komoditas.import');
 
     Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth']], function () {
         \UniSharp\LaravelFilemanager\Lfm::routes();

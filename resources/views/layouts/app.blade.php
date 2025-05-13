@@ -7,8 +7,8 @@
 <head>
     <meta charset="utf-8" />
     <title>
-        @yield('title_prefix', config('app.title_prefix', 'APM | '))
-        @yield('title', config('app.name', 'Probis'))
+        @yield('title_prefix', config('app.title_prefix', 'PANGAN'))
+        @yield('title', config('app.name', 'Pangan'))
     </title>
     <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport" />
     <link href="{{ asset('assets/img/favicon.png') }}" rel="icon">

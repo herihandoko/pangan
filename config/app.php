@@ -1,5 +1,6 @@
 <?php
 
+
 return [
 
     /*
@@ -13,8 +14,9 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Interactive'),
+    'name' => env('APP_NAME', 'Pangan'),
 
+    'title_prefix' => env('APP_NAME', 'Pangan | '),
     /*
     |--------------------------------------------------------------------------
     | Application Environment
@@ -261,6 +263,8 @@ return [
         'Html' => Collective\Html\HtmlFacade::class,
         'Configs' => App\Helpers\ConfigsHelper::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
+        'ConfigsHelper' => App\Facades\Configs::class,
+        'MenuHelper' => App\Facades\Menu::class
     ],
 
 ];
