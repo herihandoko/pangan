@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\TodoController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,10 +14,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-// Route::middleware('auth:api')->get('/user', function (Request $request) {
-//     return $request->user();
+Route::apiResource('todos', TodoController::class);
+
+// Route::prefix('v1')->group(function () {
+//     Route::get('pentest', [ApiController::class, 'pentest']);
 // });
 
-Route::group(['middleware' => 'auth:api'], function () {
-    Route::patch('pentest/update', 'ApiController@pentest');
-});
+// use App\Http\Controllers\API\TodoController;
+
+// Route::middleware('auth.bearer')->group(function () {
+//     Route::apiResource('todos', TodoController::class);
+// });
