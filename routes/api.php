@@ -1,22 +1,27 @@
 <?php
+// routes/api.php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\TerasPangan\{
+    SummaryController,
+    SupplyBalanceController,
+    PriceHistoryController,
+    PriceStatisticsController,
+    PricePerRegionController,
+    PriceTrendsController,
+    CheapFoodController,
+    GkpController,
+    MetadataController
+};
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
-
-// Route::middleware('auth:api')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
-
-Route::group(['middleware' => 'auth:api'], function () {
-    Route::patch('pentest/update', 'ApiController@pentest');
+Route::prefix('teras-pangan')->group(function () {
+    Route::get('summary', [SummaryController::class, 'index']);
+    Route::get('supply-balance', [SupplyBalanceController::class, 'index']);
+    Route::get('price-history/daily', [PriceHistoryController::class, 'daily']);
+    Route::get('price-statistics/quarterly', [PriceStatisticsController::class, 'quarterly']);
+    Route::get('price-per-region', [PricePerRegionController::class, 'index']);
+    Route::get('price-trends/monthly', [PriceTrendsController::class, 'monthly']);
+    Route::get('cheap-food', [CheapFoodController::class, 'index']);
+    Route::get('gkp', [GkpController::class, 'index']);
+    Route::get('metadata', [MetadataController::class, 'index']);
 });
