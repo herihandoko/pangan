@@ -1,27 +1,90 @@
 <?php
 
-// app/Http/Controllers/Api/TerasPangan/PriceTrendsController.php
 namespace App\Http\Controllers\Api\TerasPangan;
 
 use App\Http\Controllers\Controller;
+use App\Komoditas;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use App\Models\MasterKomoditas;
 
 class PriceTrendsController extends Controller
 {
-    public function monthly(Request $request): \Illuminate\Http\JsonResponse
+    /**
+     * GET /api/teras-pangan/price-trends/monthly
+     * Query params:
+     *   - commodities[]: array of commodity names (string)
+     *   - months: integer, number of months
+     *   - endMonth: string YYYY-MM
+     *
+     * Response JSON:
+     * {
+     *   "endMonth": "2025-05",
+     *   "trends": [
+     *     { "month": "Maret", "prices": { "Beras": 12000.00, ... } },
+     *     ...
+     *   ]
+     * }
+     */
+    public function monthly(Request $request)
     {
-        $request->validate([
-            'commodities' => 'required|array',
-            'months'      => 'required|integer|min:1',
-            'endMonth'    => 'required|date_format:Y-m'
+        $validated = $request->validate([
+            'commodities'   => 'required|array|min:1',
+            'commodities.*' => 'string|distinct',
+            'months'        => 'required|integer|min:1',
+            'endMonth'      => 'required|date_format:Y-m',
         ]);
 
-        $trends = [
-            ['month' => 'Maret', 'prices' => ['Beras' => 12000, 'Jagung' => 10000, 'Kedelai' => 8500]],
-            ['month' => 'April', 'prices' => ['Beras' => 13000, 'Jagung' => 11000, 'Kedelai' => 9000]],
-            ['month' => 'Mei',   'prices' => ['Beras' => 14000, 'Jagung' => 12000, 'Kedelai' => 9500]]
-        ];
+        $names    = $validated['commodities'];
+        $months   = (int) $validated['months'];
+        $endMonth = Carbon::createFromFormat('Y-m', $validated['endMonth'])->startOfMonth();
+        $startMonth = $endMonth->copy()->subMonths($months - 1)->startOfMonth();
 
-        return response()->json(['endMonth' => $request->endMonth, 'trends' => $trends]);
+        // Map commodity names to IDs and invert mapping for names lookup
+        $komIds      = Komoditas::whereIn('nama_pangan', $names)
+            ->pluck('id_kmd', 'nama_pangan');
+        $idToNameMap = $komIds->flip(); // Collection: id_kmd => nama_pangan
+
+        // Fetch average price per commodity per month (format YYYY-MM)
+        $records = DB::table('harga_komoditas_harian_kabkota')
+            ->select(
+                DB::raw("DATE_FORMAT(waktu, '%Y-%m') as ym"),
+                'id_komoditas',
+                DB::raw('ROUND(AVG(harga), 2) as avg_price')
+            )
+            ->whereIn('id_komoditas', $komIds->values()->toArray())
+            ->whereDate('waktu', '>=', $startMonth->toDateString())
+            ->whereDate('waktu', '<=', $endMonth->copy()->endOfMonth()->toDateString())
+            ->groupBy('ym', 'id_komoditas')
+            ->orderBy('ym')
+            ->get();
+
+        // Group by ym (year-month)
+        $grouped = $records->groupBy('ym');
+
+        $trends = [];
+        foreach ($grouped as $ym => $items) {
+            // Month name in Indonesian
+            $monthName = Carbon::createFromFormat('Y-m', $ym)
+                ->locale('id')->translatedFormat('F');
+
+            // Build prices per commodity
+            $prices = [];
+            foreach ($items as $row) {
+                $name = $idToNameMap->get($row->id_komoditas);
+                $prices[$name] = (float) $row->avg_price;
+            }
+
+            $trends[] = [
+                'month'   => $monthName,
+                'prices'  => $prices,
+            ];
+        }
+
+        return response()->json([
+            'endMonth' => $endMonth->format('Y-m'),
+            'trends'   => $trends,
+        ]);
     }
 }
