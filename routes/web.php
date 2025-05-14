@@ -80,8 +80,4 @@ Route::group(['middleware' => ['user.check', 'auth', 'web']], function () {
     Route::resource('harga-komoditas-harian', HargaKomoditasHarianKabkotaController::class);
     Route::get('data-komoditas/upload', [HargaKomoditasHarianKabkotaController::class, 'upload'])->name('data-komoditas.upload');
     Route::post('data-komoditas/import', [HargaKomoditasHarianKabkotaController::class, 'import'])->name('data-komoditas.import');
-
-    Route::group(['prefix' => 'laravel-filemanager', 'middleware' => ['web', 'auth']], function () {
-        \UniSharp\LaravelFilemanager\Lfm::routes();
-    });
 });
