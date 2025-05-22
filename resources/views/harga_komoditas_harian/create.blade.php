@@ -23,7 +23,7 @@
                 <div class="panel-body">
                     <form action="{{ route('harga-komoditas-harian.store') }}" method="POST">
                         @csrf
-                        @include('komoditas._form', ['komoditas' => null])
+                        @include('harga_komoditas_harian._form')
                         <button class="btn btn-success">Simpan</button>
                         <a href="{{ route('harga-komoditas-harian.index') }}" class="btn btn-secondary">Batal</a>
                     </form>

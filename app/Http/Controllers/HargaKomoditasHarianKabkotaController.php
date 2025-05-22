@@ -43,8 +43,8 @@ class HargaKomoditasHarianKabkotaController extends Controller
 
     public function create()
     {
-        $kabupaten  = Administrasi::pluck('wilayah_adm', 'kd_adm');
-        $komoditas  = Komoditas::pluck('nama_pangan', 'id_kmd');
+        $kabupaten  = Administrasi::pluck('nm_adm', 'kd_adm')->prepend('— Semua Kabupaten —', '');
+        $komoditas  = Komoditas::pluck('nama_pangan', 'id_kmd')->prepend('— Semua Komoditas —', '');
         return view('harga_komoditas_harian.create', compact('kabupaten', 'komoditas'));
     }
 
