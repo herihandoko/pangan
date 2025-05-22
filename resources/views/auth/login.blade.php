@@ -20,8 +20,14 @@
         <!-- begin news-feed -->
         <div class="news-feed">
             <div class="news-image">
-                <img src="{{ asset('assets/img/login-bg/bg-1.jpg') }}" data-id="login-cover-image" alt="Background Login" />
+                <img src="{{ asset('assets/img/login-bg/bg-2.jpg') }}" data-id="login-cover-image" alt="Background Login" />
             </div>
+            <div class="news-caption">
+                    <h4 class="caption-title">Pemerintah Provinsi Banten</h4>
+                    <p>
+                        Mengintegrasikan seluruh konten dan data OPD dalam satu platform CMS .
+                    </p>
+                </div>
         </div>
         <!-- end news-feed -->
         <!-- begin right-content -->
